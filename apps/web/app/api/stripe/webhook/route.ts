@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
           const userId = session.metadata?.userId || session.client_reference_id;
 
           if (!userId) {
-            logger.error("No userId in checkout session metadata", { sessionId: session.id });
+            logger.error({ sessionId: session.id }, "No userId in checkout session metadata");
             break;
           }
 
