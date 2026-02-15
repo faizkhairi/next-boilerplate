@@ -1,0 +1,26 @@
+{
+  "name": "@repo/email",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./mailer": "./src/mailer.ts",
+    "./templates/*": "./src/templates/*"
+  },
+  "scripts": {
+    "dev": "email dev"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.25",
+    "nodemailer": "^6.9.16",
+    "react": "^19.0.0",
+    "react-email": "^3.0.4"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/nodemailer": "^6.4.17",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.7.3"
+  }
+}
