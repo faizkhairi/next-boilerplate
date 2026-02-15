@@ -30,7 +30,9 @@ pnpm-debug.log*
 .turbo
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
