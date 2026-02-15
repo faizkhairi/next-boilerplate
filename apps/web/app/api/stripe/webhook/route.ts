@@ -96,18 +96,18 @@ export async function POST(request: NextRequest) {
 
       case "invoice.payment_succeeded": {
         // Handle successful payment
-        logger.info("Payment succeeded", { invoiceId: event.data.object.id });
+        logger.info({ invoiceId: event.data.object.id }, "Payment succeeded");
         break;
       }
 
       case "invoice.payment_failed": {
         // Handle failed payment
-        logger.warn("Payment failed", { invoiceId: event.data.object.id });
+        logger.warn({ invoiceId: event.data.object.id }, "Payment failed");
         break;
       }
 
       default:
-        logger.debug("Unhandled Stripe event type", { eventType: event.type });
+        logger.debug({ eventType: event.type }, "Unhandled Stripe event type");
     }
 
     return NextResponse.json({ received: true });
