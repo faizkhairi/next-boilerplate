@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,30 @@ import {
 } from "@/components/ui/card";
 
 export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <Card>
+          <CardHeader>
+            <CardTitle>Verifying Email...</CardTitle>
+            <CardDescription>
+              Please wait while we verify your email address.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          </CardContent>
+        </Card>
+      }
+    >
+      <VerifyEmailContent />
+    </Suspense>
+  );
+}
+
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"

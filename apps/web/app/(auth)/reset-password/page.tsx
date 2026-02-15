@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +19,28 @@ import {
 import { resetPasswordSchema, type ResetPasswordInput } from "@/lib/validations";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">Set New Password</CardTitle>
+            <CardDescription>Loading...</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          </CardContent>
+        </Card>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState("");
