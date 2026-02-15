@@ -402,15 +402,52 @@ docker compose restart postgres
 
 ## Testing
 
-**Unit Tests:** (Optional - not yet implemented)
+**Unit Tests:** Vitest with React Testing Library
 ```bash
-pnpm test
+pnpm --filter @repo/web test
 ```
 
-**E2E Tests:** (Optional - not yet implemented)
+**E2E Tests:** Playwright
 ```bash
-pnpm test:e2e
+pnpm --filter @repo/web test:e2e
 ```
+
+---
+
+## Pre-Push Build Verification
+
+**Always run the production build locally before pushing to CI:**
+```bash
+pnpm build
+```
+
+This catches issues that dev mode silently ignores:
+- **Pino logger signatures**: Must be `logger.info(obj, msg)` not `logger.info(msg, obj)`
+- **React Server Components**: Pages without `"use client"` cannot use `onClick`, `useState`, etc.
+- **`useSearchParams()`**: Must be wrapped in `<Suspense>` for static pre-rendering
+- **Type errors**: `tsc --noEmit` runs during `next build` but not during `next dev`
+
+---
+
+## Next.js 15 Patterns (Important)
+
+### Server vs Client Components
+- **Default** is Server Component — no `useState`, `useEffect`, `onClick` allowed
+- Add `"use client"` only when needed for interactivity
+- The `error.tsx` and `not-found.tsx` files need `"use client"` if they use event handlers
+
+### useSearchParams Requires Suspense
+Pages using `useSearchParams()` must wrap the consuming component in `<Suspense>`:
+```tsx
+export default function MyPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <MyContent />  {/* useSearchParams() lives here */}
+    </Suspense>
+  );
+}
+```
+This is required because Next.js 15 pre-renders pages statically, and search params are only available client-side.
 
 ---
 
@@ -454,10 +491,10 @@ pnpm test:e2e
 
 ### Adding Tests
 
-1. Install Vitest: `pnpm add -D vitest @testing-library/react`
-2. Create `vitest.config.ts`
-3. Add tests in `__tests__/` directories
-4. Install Playwright: `pnpm add -D @playwright/test`
+Vitest and Playwright are already installed. Add test files:
+- Unit tests: `apps/web/__tests__/` or co-located `*.test.ts` files
+- E2E tests: `apps/web/e2e/` Playwright specs
+- Run: `pnpm --filter @repo/web test` (unit) or `pnpm --filter @repo/web test:e2e` (E2E)
 
 ---
 

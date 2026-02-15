@@ -225,10 +225,10 @@ pnpm start
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| Framework | Next.js | 15.1.6 |
-| Language | TypeScript | 5.7.3 |
-| Auth | NextAuth.js | 4.24.11 |
-| Database | Prisma + PostgreSQL | 6.19.2 |
+| Framework | Next.js | ^15.1.6 |
+| Language | TypeScript | ^5.7.3 |
+| Auth | NextAuth.js | ^4.24.11 |
+| Database | Prisma + PostgreSQL | ^6.19.2 |
 | Email | Nodemailer + React Email | Latest |
 | UI | Shadcn + Tailwind CSS | Latest |
 | Forms | React Hook Form + Zod | Latest |
