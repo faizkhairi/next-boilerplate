@@ -6,7 +6,7 @@ If you discover a security vulnerability in this project, please report it respo
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
-Instead, please email **faiz@faizkhairi.my** with:
+Instead, please email **ifaizkhairi@gmail.com** with:
 
 1. A description of the vulnerability
 2. Steps to reproduce the issue
