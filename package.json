@@ -1,7 +1,7 @@
 {
   "name": "next-boilerplate",
   "version": "1.0.0",
-  "description": "Production-ready Next.js 15 boilerplate with NextAuth.js, Prisma, React Email, Shadcn UI, Stripe (opt-in), Docker Compose. Zero external dependencies.",
+  "description": "Next.js 15 full-stack starter: NextAuth.js, Prisma, React Email, shadcn/ui, Stripe (opt-in), Docker Compose. No third-party SaaS accounts required.",
   "author": "Faiz Khairi <ifaizkhairi@gmail.com> (https://faizkhairi.github.io)",
   "license": "MIT",
   "private": true,

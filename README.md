@@ -1,6 +1,6 @@
 # next-boilerplate
 
-> Production-ready Next.js 15 boilerplate with **zero external account dependencies**
+> Next.js 15 full-stack starter with **no third-party SaaS accounts required**
 
 A comprehensive, self-contained Next.js monorepo template for building SaaS applications. No Clerk, no Resend, no PostHog, no Sentry — just pure Next.js with best practices.
 
@@ -59,7 +59,7 @@ A comprehensive, self-contained Next.js monorepo template for building SaaS appl
 gh repo create my-app --template faizkhairi/next-boilerplate --private --clone
 cd my-app
 
-# Install dependencies
+# Install dependencies (also generates the Prisma client via postinstall)
 pnpm install
 
 # Copy environment variables
