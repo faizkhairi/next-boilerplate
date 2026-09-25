@@ -23,7 +23,7 @@ A comprehensive, self-contained Next.js monorepo template for building SaaS appl
 - React Email templates (welcome, verification, password reset)
 - Nodemailer with SMTP
 - Mailpit for local development (http://localhost:8025)
-- Production-ready for any SMTP provider
+- Works with any SMTP provider
 
 ✅ **UI**
 - Shadcn UI components
