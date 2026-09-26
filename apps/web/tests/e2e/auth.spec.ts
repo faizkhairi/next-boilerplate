@@ -92,7 +92,7 @@ test.describe("Authentication Flow", () => {
   test("protected dashboard redirects to login", async ({ page }) => {
     await page.goto("/dashboard");
 
-    // Should redirect to login
-    await expect(page).toHaveURL("/auth/login");
+    // Should redirect to login, remembering where the user was going
+    await expect(page).toHaveURL("/auth/login?callbackUrl=%2Fdashboard");
   });
 });

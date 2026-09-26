@@ -9,7 +9,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "html",
+  // In CI, never serve the HTML report (it would wait for Ctrl+C) and add
+  // GitHub annotations; the report folder is still uploaded on failure.
+  reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "html",
   use: {
     baseURL,
     trace: "on-first-retry",
