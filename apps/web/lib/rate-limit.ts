@@ -153,8 +153,9 @@ function trustedProxyCount(): number {
  * client sent. Reading the leftmost entry would let a client pick a fresh
  * rate limit bucket per request, so this reads the entry written by the
  * outermost trusted proxy: `TRUSTED_PROXY_COUNT` places from the right.
- * Behind no proxy at all, every header is client-controlled; run the app
- * behind one in production.
+ * A header with fewer entries than that bypassed a trusted proxy and is
+ * ignored. Behind no proxy at all, every header is client-controlled; run the
+ * app behind one in production.
  */
 export function getRequestIP(request: NextRequest): string | null {
   const forwardedFor = request.headers.get('x-forwarded-for')
@@ -163,9 +164,12 @@ export function getRequestIP(request: NextRequest): string | null {
       .split(',')
       .map((entry) => entry.trim())
       .filter(Boolean)
-    const index = Math.max(0, hops.length - trustedProxyCount())
-    const ip = hops[index]
-    if (ip) return ip
+    const trusted = trustedProxyCount()
+    // Fewer entries than trusted proxies means the request skipped at least
+    // one of them, so every entry is client-chosen. Return null so these
+    // requests share the 'unknown' bucket instead of picking their own.
+    if (hops.length < trusted) return null
+    return hops[hops.length - trusted] ?? null
   }
 
   // Set by nginx (`proxy_set_header X-Real-IP $remote_addr`) and Vercel,
