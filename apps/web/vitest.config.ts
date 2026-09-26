@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  // @ts-expect-error - Vite plugin version mismatch between Next.js and Vitest is expected
   plugins: [react()],
   test: {
     environment: "jsdom",

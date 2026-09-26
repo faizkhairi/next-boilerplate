@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -41,7 +41,6 @@ export default function ResetPasswordPage() {
 }
 
 function ResetPasswordContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -57,12 +56,6 @@ function ResetPasswordContent() {
   } = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
   });
-
-  useEffect(() => {
-    if (!token || !email) {
-      setError("Invalid reset link");
-    }
-  }, [token, email]);
 
   const onSubmit = async (data: ResetPasswordInput) => {
     if (!token || !email) return;
@@ -88,7 +81,7 @@ function ResetPasswordContent() {
       } else {
         setSuccess(true);
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);

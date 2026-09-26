@@ -1,6 +1,6 @@
 # next-boilerplate
 
-> Next.js 15 full-stack starter with **no third-party SaaS accounts required**
+> Next.js 16 full-stack starter with **no third-party SaaS accounts required**
 
 A comprehensive, self-contained Next.js monorepo template for building SaaS applications. No Clerk, no Resend, no PostHog, no Sentry — just pure Next.js with best practices.
 
@@ -39,8 +39,8 @@ A comprehensive, self-contained Next.js monorepo template for building SaaS appl
 
 ✅ **Monorepo**
 - Turborepo for fast builds
-- `apps/web` (Next.js 15), `apps/docs` (VitePress)
-- Shared packages: database, email, payments (Stripe opt-in), TypeScript config, ESLint config
+- `apps/web` (Next.js 16), `apps/docs` (VitePress)
+- Shared packages: database, email, payments (Stripe opt-in), TypeScript config
 - pnpm workspaces
 
 **Zero external account dependencies:** This is a custom boilerplate, not next-forge. Auth is NextAuth.js (no Clerk), email is Nodemailer (no Resend), database is Prisma + Docker PostgreSQL (no Neon). No PostHog, Sentry, or BetterStack. Run `pnpm install`, `docker compose up -d`, and start coding — no SaaS signups required.
@@ -49,7 +49,7 @@ A comprehensive, self-contained Next.js monorepo template for building SaaS appl
 
 ### Prerequisites
 
-- Node.js 18+ and pnpm
+- Node.js 22.13+ (see `.nvmrc`) and pnpm
 - Docker Desktop (for PostgreSQL + Mailpit)
 
 ### Installation
@@ -88,7 +88,7 @@ View development emails at [http://localhost:8025](http://localhost:8025) (Mailp
 ```
 next-boilerplate/
 ├── apps/
-│   └── web/                      # Next.js 15 application
+│   └── web/                      # Next.js 16 application
 │       ├── app/
 │       │   ├── (auth)/           # Auth routes
 │       │   ├── api/              # API routes
@@ -279,7 +279,7 @@ pnpm start
   - [ ] Enable HTTPS (SSL/TLS certificate)
   - [ ] Set secure cookies (NEXTAUTH_URL must be https://)
   - [ ] Configure CORS if needed
-  - [ ] Review rate limiting settings in `lib/ratelimit.ts`
+  - [ ] Review rate limiting settings in `lib/rate-limit.ts`
   - [ ] Audit dependencies for vulnerabilities: `pnpm audit`
 
 - [ ] **Email**: Configure production SMTP provider

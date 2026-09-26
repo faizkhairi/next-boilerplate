@@ -5,12 +5,15 @@
 // Run `pnpm db:push` to sync with database, `pnpm db:migrate` for migrations.
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/client"
 }
 
+// Prisma 7: the datasource URL no longer lives here. Migrate reads it from
+// `prisma.config.ts`, and PrismaClient receives it via the `@prisma/adapter-pg`
+// driver adapter in `src/client.ts`.
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // =============================================================================

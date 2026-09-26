@@ -71,7 +71,7 @@ function VerifyEmailContent() {
           setStatus("success");
           setMessage(result.message);
         }
-      } catch (err) {
+      } catch {
         setStatus("error");
         setMessage("An unexpected error occurred");
       }
