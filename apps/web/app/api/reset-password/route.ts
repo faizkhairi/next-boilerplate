@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { resetPassword } from "@/lib/auth-utils";
 import { resetPasswordSchema } from "@/lib/validations";
 import { logError } from "@/lib/logger";
+import { checkRateLimit, rateLimitResponse, RateLimitPresets } from "@/lib/rate-limit";
 
 /**
  * POST /api/reset-password
@@ -18,9 +19,17 @@ import { logError } from "@/lib/logger";
  *
  * @returns {200} Password reset successful
  * @returns {400} Validation failed or invalid/expired token
+ * @returns {429} Rate limit exceeded
  * @returns {500} Internal server error
  */
 export async function POST(request: NextRequest) {
+  // Apply rate limiting (5 requests per minute) against token-guessing attempts
+  const rateLimit = checkRateLimit(request, RateLimitPresets.auth);
+
+  if (!rateLimit.success) {
+    return rateLimitResponse(rateLimit, RateLimitPresets.auth.message);
+  }
+
   try {
     const body = await request.json();
     const { email, token, password } = body;

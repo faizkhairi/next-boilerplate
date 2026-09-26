@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requestPasswordReset } from "@/lib/auth-utils";
 import { forgotPasswordSchema } from "@/lib/validations";
 import { logError } from "@/lib/logger";
+import { checkRateLimit, rateLimitResponse, RateLimitPresets } from "@/lib/rate-limit";
 
 /**
  * POST /api/forgot-password
@@ -16,9 +17,17 @@ import { logError } from "@/lib/logger";
  *
  * @returns {200} Success - password reset email sent (or email doesn't exist)
  * @returns {400} Validation failed
+ * @returns {429} Rate limit exceeded
  * @returns {500} Internal server error
  */
 export async function POST(request: NextRequest) {
+  // Apply rate limiting (5 requests per minute) to slow down enumeration/abuse
+  const rateLimit = checkRateLimit(request, RateLimitPresets.auth);
+
+  if (!rateLimit.success) {
+    return rateLimitResponse(rateLimit, RateLimitPresets.auth.message);
+  }
+
   try {
     const body = await request.json();
 
