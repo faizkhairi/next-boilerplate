@@ -1,8 +1,8 @@
-# next-boilerplate — AI Development Guide
+# next-boilerplate: AI Development Guide
 
 ## Project Overview
 
-Production-ready Next.js 15 boilerplate with **zero external account dependencies**. Self-contained monorepo for building SaaS applications without relying on third-party services like Clerk, Resend, PostHog, or Sentry.
+Next.js 16 boilerplate with **zero external account dependencies**. Self-contained monorepo for building SaaS applications without relying on third-party services like Clerk, Resend, PostHog, or Sentry.
 
 **Philosophy:** Simple, fast to start, fully self-contained development environment.
 
@@ -12,10 +12,10 @@ Production-ready Next.js 15 boilerplate with **zero external account dependencie
 
 | Layer | Technology | Why |
 |-------|-----------|-----|
-| **Framework** | Next.js 15 (App Router) | Latest React patterns, server components, streaming SSR |
-| **Language** | TypeScript 5.7.3 | Type safety, better DX, fewer runtime errors |
+| **Framework** | Next.js 16 (App Router) | Latest React patterns, server components, streaming SSR |
+| **Language** | TypeScript 6.0 | Type safety, better DX, fewer runtime errors |
 | **Auth** | NextAuth.js 4.24 | Open source, supports credentials + OAuth, JWT sessions |
-| **Database** | Prisma 6.19 + PostgreSQL 16 | Type-safe ORM, excellent DX, Docker for local dev |
+| **Database** | Prisma 7.10 (`@prisma/adapter-pg`) + PostgreSQL 16 | Type-safe ORM, excellent DX, Docker for local dev |
 | **Email** | Nodemailer + React Email | SMTP-agnostic, works with any provider, preview in Mailpit |
 | **UI** | Shadcn + Tailwind CSS | Copy-paste components, highly customizable, no runtime overhead |
 | **Forms** | React Hook Form + Zod | Performant, type-safe validation, great UX |
@@ -30,7 +30,7 @@ Production-ready Next.js 15 boilerplate with **zero external account dependencie
 ```
 next-boilerplate/
 ├── apps/
-│   └── web/                      # Next.js 15 application
+│   └── web/                      # Next.js 16 application
 │       ├── app/
 │       │   ├── (auth)/           # Auth routes (login, register, etc.)
 │       │   ├── api/              # API routes
@@ -38,17 +38,18 @@ next-boilerplate/
 │       │   ├── dashboard/        # Protected routes
 │       │   ├── layout.tsx        # Root layout
 │       │   ├── page.tsx          # Landing page
-│       │   └── globals.css       # Tailwind + CSS variables
+│       │   └── globals.css       # Tailwind (CSS-first config, no tailwind.config.ts) + CSS variables
 │       ├── components/
 │       │   └── ui/               # Shadcn components
 │       ├── lib/
 │       │   ├── auth.ts           # NextAuth.js config
 │       │   ├── auth-utils.ts     # Auth helpers (register, verify, reset)
 │       │   ├── db.ts             # Prisma client export
+│       │   ├── rate-limit.ts     # In-memory rate limiter for auth routes
 │       │   ├── validations.ts    # Zod schemas
 │       │   └── utils.ts          # Utility functions (cn, etc.)
-│       ├── next.config.ts
-│       ├── tailwind.config.ts
+│       ├── next.config.ts        # Security headers + CSP
+│       ├── proxy.ts              # Route protection (renamed from middleware.ts in Next.js 16)
 │       └── package.json
 │
 ├── packages/
@@ -296,7 +297,6 @@ docker compose -f docker-compose.prod.yml up
 
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 
 ---
 
@@ -429,10 +429,10 @@ This catches issues that dev mode silently ignores:
 
 ---
 
-## Next.js 15 Patterns (Important)
+## Next.js 16 Patterns (Important)
 
 ### Server vs Client Components
-- **Default** is Server Component — no `useState`, `useEffect`, `onClick` allowed
+- **Default** is Server Component: no `useState`, `useEffect`, `onClick` allowed
 - Add `"use client"` only when needed for interactivity
 - The `error.tsx` and `not-found.tsx` files need `"use client"` if they use event handlers
 
@@ -447,19 +447,19 @@ export default function MyPage() {
   );
 }
 ```
-This is required because Next.js 15 pre-renders pages statically, and search params are only available client-side.
+This is required because Next.js pre-renders pages statically, and search params are only available client-side.
 
 ---
 
 ## Security Best Practices
 
-1. **Never commit `.env`** — use `.env.example` as template
+1. **Never commit `.env`**: use `.env.example` as template
 2. **Rotate `NEXTAUTH_SECRET`** regularly in production
 3. **Use HTTPS** in production (`NEXTAUTH_URL` should be `https://`)
 4. **Validate all inputs** with Zod schemas
 5. **Hash passwords** with bcrypt (10 salt rounds)
 6. **Email verification required** before login (enforced in credentials provider)
-7. **Rate limit API routes** (add middleware as needed)
+7. **Rate limit API routes**: already applied to `/api/register`, `/api/forgot-password`, `/api/reset-password` and the credentials sign-in callback via `lib/rate-limit.ts` (in-memory, single-instance; swap for Redis/Upstash before scaling out)
 
 ---
 
@@ -535,4 +535,4 @@ pnpm --filter @repo/database db:migrate
 
 ---
 
-**Last Updated:** 2026-02-15
+**Last Updated:** 2026-09-26

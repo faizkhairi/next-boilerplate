@@ -1,6 +1,14 @@
 # next-boilerplate Implementation Guide
 
-**Status:** ✅ PRODUCTION READY - All Phases Complete
+> **Historical build log.** This is the phase-by-phase plan used to build the
+> original Next.js 15 scaffold (completion date below). All phases were
+> completed, and the stack has since moved on (Next.js 16, Prisma 7,
+> TypeScript 6, Tailwind 4). The code snippets in each phase reflect what was
+> written at the time and are kept as a record; they are not a description of
+> the current codebase. For current facts, see [README.md](README.md) and
+> [CLAUDE.md](CLAUDE.md).
+
+**Status:** Production ready. All phases complete.
 
 **Context:** Custom zero-dependency Next.js 15 boilerplate to replace next-forge. Mirroring nuxt-boilerplate architecture (P1).
 
@@ -17,9 +25,9 @@
 - [x] Git history preserved
 
 ### Packages
-- [x] **packages/typescript-config** — base.json, nextjs.json
-- [x] **packages/database** — Prisma schema (User, Account, Session, Subscription)
-- [x] **packages/email** — package.json structure
+- [x] **packages/typescript-config**: base.json, nextjs.json
+- [x] **packages/database**: Prisma schema (User, Account, Session, Subscription)
+- [x] **packages/email**: package.json structure
 
 ### Repository
 - [x] 2 commits pushed to main
@@ -244,11 +252,11 @@ apps/web/
 **Reference:** nuxt-boilerplate/apps/web/pages/auth/
 
 Create React versions of:
-- `login/page.tsx` — Form with email/password, OAuth buttons
-- `register/page.tsx` — Form with name, email, password, confirmPassword
-- `forgot-password/page.tsx` — Email input form
-- `reset-password/page.tsx` — New password form (with token from query)
-- `verify/page.tsx` — Auto-verify on mount with token from query
+- `login/page.tsx`: Form with email/password, OAuth buttons
+- `register/page.tsx`: Form with name, email, password, confirmPassword
+- `forgot-password/page.tsx`: Email input form
+- `reset-password/page.tsx`: New password form (with token from query)
+- `verify/page.tsx`: Auto-verify on mount with token from query
 
 **Pattern:**
 - Use React Hook Form + Zod (like nuxt-boilerplate but for React)
@@ -263,10 +271,10 @@ Create React versions of:
 
 Create Next.js API routes:
 
-1. `apps/web/app/api/register/route.ts` — POST handler, calls registerUser()
-2. `apps/web/app/api/verify-email/route.ts` — POST handler, calls verifyEmail()
-3. `apps/web/app/api/forgot-password/route.ts` — POST handler, calls requestPasswordReset()
-4. `apps/web/app/api/reset-password/route.ts` — POST handler, calls resetPassword()
+1. `apps/web/app/api/register/route.ts`: POST handler, calls registerUser()
+2. `apps/web/app/api/verify-email/route.ts`: POST handler, calls verifyEmail()
+3. `apps/web/app/api/forgot-password/route.ts`: POST handler, calls requestPasswordReset()
+4. `apps/web/app/api/reset-password/route.ts`: POST handler, calls resetPassword()
 
 ---
 
@@ -402,11 +410,11 @@ SMTP_FROM="noreply@example.com"
 ## Key Patterns to Follow
 
 **From nuxt-boilerplate:**
-1. **Zero external dependencies** — no Clerk, Resend, PostHog, Sentry
-2. **Opt-in Stripe** — only enabled if env vars set
-3. **Mailpit for dev** — all emails caught locally (localhost:8025)
-4. **Docker Compose** — one command to start PostgreSQL + Mailpit
-5. **Self-contained** — `pnpm install && docker compose up && pnpm dev` = working app
+1. **Zero external dependencies**: no Clerk, Resend, PostHog, Sentry
+2. **Opt-in Stripe**: only enabled if env vars set
+3. **Mailpit for dev**: all emails caught locally (localhost:8025)
+4. **Docker Compose**: one command to start PostgreSQL + Mailpit
+5. **Self-contained**: `pnpm install && docker compose up && pnpm dev` = working app
 
 **NextAuth.js vs Sidebase Nuxt Auth:**
 - NextAuth.js is the underlying library (Sidebase wraps it for Nuxt)

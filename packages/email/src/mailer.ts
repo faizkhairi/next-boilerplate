@@ -5,7 +5,7 @@ import type { Transporter, SendMailOptions } from "nodemailer";
 // SMTP-Agnostic Email Client for Next.js
 // =============================================================================
 // Development: Sends to Mailpit (docker compose up) at localhost:1025
-// Production:  Sends via any SMTP provider — set SMTP_HOST/PORT/USER/PASS env vars
+// Production:  Sends via any SMTP provider: set SMTP_HOST/PORT/USER/PASS env vars
 //
 // View dev emails at: http://localhost:8025
 

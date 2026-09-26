@@ -10,15 +10,15 @@
 
 ## Apps
 
-- **apps/web** — Next.js 16 app (auth, dashboard, Stripe opt-in)
-- **apps/docs** — This VitePress site
+- **apps/web**: Next.js 16 app (auth, dashboard, Stripe opt-in)
+- **apps/docs**: This VitePress site
 
 ## Packages
 
-- **@repo/database** — Prisma schema and client
-- **@repo/email** — Nodemailer + React Email templates
-- **@repo/payments** — Stripe (opt-in)
-- **@repo/typescript-config** — Shared TypeScript config
+- **@repo/database**: Prisma schema and client
+- **@repo/email**: Nodemailer + React Email templates
+- **@repo/payments**: Stripe (opt-in)
+- **@repo/typescript-config**: Shared TypeScript config
 
 ESLint config lives directly in `apps/web/eslint.config.mjs` (flat config built on
 `eslint-config-next`); there is no separate `@repo/eslint-config` package.

@@ -1,62 +1,46 @@
 # next-boilerplate
 
-> Next.js 16 full-stack starter with **no third-party SaaS accounts required**
+A self-contained Next.js monorepo template for building SaaS applications: no Clerk, no Resend, no PostHog, no Sentry, just NextAuth.js, Prisma and Nodemailer with local Docker services.
 
-A comprehensive, self-contained Next.js monorepo template for building SaaS applications. No Clerk, no Resend, no PostHog, no Sentry — just pure Next.js with best practices.
+[![CI](https://github.com/faizkhairi/next-boilerplate/actions/workflows/ci.yml/badge.svg)](https://github.com/faizkhairi/next-boilerplate/actions/workflows/ci.yml)
 
 ## Features
 
-✅ **Authentication**
-- NextAuth.js with credentials + OAuth (GitHub, Google)
-- Email verification workflow
-- Password reset flow
-- JWT session strategy
-- Protected routes & middleware
-
-✅ **Database**
-- Prisma ORM with PostgreSQL
-- User, Account, Session, Subscription models
-- Type-safe database access
-- Docker Compose for local PostgreSQL
-
-✅ **Email**
-- React Email templates (welcome, verification, password reset)
-- Nodemailer with SMTP
-- Mailpit for local development (http://localhost:8025)
-- Works with any SMTP provider
-
-✅ **UI**
-- Shadcn UI components
-- Tailwind CSS
-- Dark mode support
-- Responsive design
-- Lucide icons
-
-✅ **Payments (Optional)**
-- Stripe integration (opt-in)
-- Subscription management
-- Webhook handling
-
-✅ **Monorepo**
-- Turborepo for fast builds
-- `apps/web` (Next.js 16), `apps/docs` (VitePress)
-- Shared packages: database, email, payments (Stripe opt-in), TypeScript config
-- pnpm workspaces
-
-**Zero external account dependencies:** This is a custom boilerplate, not next-forge. Auth is NextAuth.js (no Clerk), email is Nodemailer (no Resend), database is Prisma + Docker PostgreSQL (no Neon). No PostHog, Sentry, or BetterStack. Run `pnpm install`, `docker compose up -d`, and start coding — no SaaS signups required.
+- **Auth**: NextAuth.js with credentials + optional GitHub/Google OAuth, JWT sessions, email verification, password reset, route protection via `proxy.ts`
+- **Database**: Prisma 7 (`@prisma/adapter-pg`) + PostgreSQL, with `User`, `Account`, `Session`, `VerificationToken` and `Subscription` models
+- **Email**: React Email templates (welcome, verify, reset password) sent through Nodemailer; Mailpit catches everything locally
+- **UI**: shadcn/ui components on Tailwind CSS 4, dark mode, Lucide icons
+- **Payments (opt-in)**: Stripe checkout (redirect-based) and webhook handling, only active once `STRIPE_SECRET_KEY` is set
+- **Security**: CSP and other security headers on every route, in-memory rate limiting on auth endpoints, an `/api/health` endpoint for uptime checks
+- **Monorepo**: Turborepo + pnpm workspaces, `apps/web` (Next.js), `apps/docs` (VitePress), shared `packages/database`, `packages/email`, `packages/payments`, `packages/typescript-config`
+- **CI**: lint, typecheck, unit tests with an enforced coverage floor, build on Node 22 and 24, `pnpm audit`, gitleaks secret scanning and a Playwright E2E job, all in GitHub Actions
+- **Dependabot**: weekly grouped updates for npm and GitHub Actions
 
 ## Quick Start
 
-### Prerequisites
-
-- Node.js 22.13+ (see `.nvmrc`) and pnpm
-- Docker Desktop (for PostgreSQL + Mailpit)
-
-### Installation
+Create a new project from this template, either:
 
 ```bash
-# Create project from template
+npx degit faizkhairi/next-boilerplate my-app
+```
+
+or:
+
+```bash
 gh repo create my-app --template faizkhairi/next-boilerplate --private --clone
+```
+
+or click **Use this template** on GitHub and clone the resulting repository.
+
+### Prerequisites
+
+- Node.js 22.13+ (see `.nvmrc`; 24 LTS is recommended and is what CI's default build job uses)
+- pnpm 12, via `corepack enable` (reads the pinned version from `package.json`) or `npm i -g pnpm@12`
+- Docker Desktop, for local PostgreSQL and Mailpit
+
+### Install and run
+
+```bash
 cd my-app
 
 # Install dependencies (also generates the Prisma client via postinstall)
@@ -65,301 +49,167 @@ pnpm install
 # Copy environment variables
 cp .env.example .env
 
-# Generate NEXTAUTH_SECRET
+# Generate NEXTAUTH_SECRET and paste the output into .env
 openssl rand -base64 32
-# Add the output to .env as NEXTAUTH_SECRET
 
-# Start Docker services (PostgreSQL + Mailpit)
+# Start PostgreSQL + Mailpit
 docker compose up -d
 
-# Push database schema
+# Push the Prisma schema to the database
 pnpm db:push
 
-# Start development server
+# Start the dev server
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000). Development emails land in Mailpit at [http://localhost:8025](http://localhost:8025).
 
-View development emails at [http://localhost:8025](http://localhost:8025) (Mailpit UI).
+## Environment Variables
+
+All variables are documented with placeholders in `.env.example`.
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string used by Prisma |
+| `NEXTAUTH_URL` | Yes | Base URL of the app, used by NextAuth.js for callbacks |
+| `NEXTAUTH_SECRET` | Yes | Signs NextAuth.js JWTs and cookies; generate with `openssl rand -base64 32` |
+| `SMTP_HOST` | Yes | SMTP server host (Mailpit locally, any provider in production) |
+| `SMTP_PORT` | Yes | SMTP server port |
+| `SMTP_USER` | Optional | SMTP username (empty for Mailpit) |
+| `SMTP_PASS` | Optional | SMTP password (empty for Mailpit) |
+| `SMTP_FROM` | Yes | Sender address for outgoing email |
+| `GITHUB_CLIENT_ID` | Optional | Enables GitHub OAuth when set with the secret below |
+| `GITHUB_CLIENT_SECRET` | Optional | GitHub OAuth app secret |
+| `NEXT_PUBLIC_GITHUB_ENABLED` | Optional | Client-side flag that shows the GitHub login button |
+| `GOOGLE_CLIENT_ID` | Optional | Enables Google OAuth when set with the secret below |
+| `GOOGLE_CLIENT_SECRET` | Optional | Google OAuth app secret |
+| `NEXT_PUBLIC_GOOGLE_ENABLED` | Optional | Client-side flag that shows the Google login button |
+| `STRIPE_SECRET_KEY` | Optional | Enables Stripe checkout and subscription management |
+| `STRIPE_WEBHOOK_SECRET` | Optional | Verifies incoming Stripe webhook signatures |
+| `PORT` | Optional | Overrides the port `next dev`/`next start` and the Playwright webServer listen on (default `3000`) |
+
+## Scripts
+
+Run from the repository root; each fans out to every workspace package via Turborepo.
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start all apps in dev mode |
+| `pnpm build` | Build all apps and packages |
+| `pnpm lint` | Run ESLint across the workspace |
+| `pnpm typecheck` | Run `tsc --noEmit` across the workspace |
+| `pnpm test` | Run unit tests across the workspace |
+| `pnpm test:coverage` | Run unit tests with coverage |
+| `pnpm db:push` | Push the Prisma schema to the database (shortcut for `pnpm --filter @repo/database db:push`) |
+| `pnpm db:studio` | Open Prisma Studio (shortcut for `pnpm --filter @repo/database db:studio`) |
+
+Two commands only exist at the package level, not as root shortcuts:
+
+| Command | Description |
+|---------|-------------|
+| `pnpm --filter @repo/database db:migrate` | Create and apply a Prisma migration |
+| `pnpm --filter @repo/web test:e2e` | Run the Playwright E2E suite |
+
+## Testing
+
+**Unit tests** run with Vitest against `apps/web/lib/**` and `apps/web/app/api/**`:
+
+```bash
+pnpm test
+```
+
+**Coverage** is enforced in CI and locally:
+
+```bash
+pnpm test:coverage
+```
+
+The thresholds live in `apps/web/vitest.config.ts` and are currently `10%` lines, `25%` functions, `10%` branches, `10%` statements, set just below the coverage measured when the thresholds were added. They are meant to only go up as more tests are added; never lower them to make CI pass.
+
+**E2E tests** use Playwright against a running Postgres instance:
+
+```bash
+docker compose up -d
+pnpm db:push
+pnpm --filter @repo/web test:e2e
+```
+
+CI runs the E2E job against a production build (`pnpm build` then `pnpm start`) on Chromium only; the local Playwright config also defines Firefox and WebKit projects.
 
 ## Project Structure
 
 ```
 next-boilerplate/
 ├── apps/
-│   └── web/                      # Next.js 16 application
-│       ├── app/
-│       │   ├── (auth)/           # Auth routes
-│       │   ├── api/              # API routes
-│       │   └── dashboard/        # Protected routes
-│       ├── components/           # React components
-│       │   └── ui/               # Shadcn components
-│       └── lib/                  # Utilities & config
+│   ├── web/                      # Next.js 16 application
+│   │   ├── app/
+│   │   │   ├── (auth)/           # Login, register, forgot/reset password, verify
+│   │   │   ├── api/              # Route handlers (auth, register, health, stripe, admin)
+│   │   │   └── dashboard/        # Protected routes, incl. the Stripe subscription page
+│   │   ├── components/ui/        # shadcn/ui components
+│   │   ├── lib/                  # Auth config, rate limiting, validation, logging
+│   │   ├── tests/e2e/            # Playwright specs
+│   │   ├── next.config.ts        # Security headers + CSP
+│   │   └── proxy.ts              # Route protection (Next.js 16's renamed middleware)
+│   └── docs/                     # VitePress documentation site
 │
 ├── packages/
-│   ├── database/                 # Prisma schema + client
+│   ├── database/                 # Prisma schema, config and client
 │   ├── email/                    # React Email templates + Nodemailer
-│   └── typescript-config/        # Shared TypeScript configs
+│   ├── payments/                 # Stripe client (opt-in)
+│   └── typescript-config/        # Shared tsconfig bases
 │
 ├── docker-compose.yml            # PostgreSQL + Mailpit
-├── turbo.json                    # Turborepo config
-└── .env.example                  # Environment variables template
+├── turbo.json                    # Turborepo pipeline
+└── .env.example                  # Environment variable template
 ```
 
-## Environment Variables
+## Security
 
-See `.env.example` for all available variables. Key settings:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://postgres:postgres@localhost:5432/next_boilerplate` |
-| `NEXTAUTH_URL` | App URL | `http://localhost:3000` |
-| `NEXTAUTH_SECRET` | NextAuth.js secret (32+ chars) | Required |
-| `SMTP_HOST` | SMTP server host | `localhost` (Mailpit) |
-| `SMTP_PORT` | SMTP server port | `1025` (Mailpit) |
-| `SMTP_FROM` | Email sender address | `noreply@example.com` |
-
-### Optional OAuth
-
-Uncomment and fill in `.env` to enable:
-
-- **GitHub OAuth**: `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `NEXT_PUBLIC_GITHUB_ENABLED`
-- **Google OAuth**: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_GOOGLE_ENABLED`
-
-### Optional Stripe
-
-Uncomment and fill in `.env` to enable payments:
-
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-
-## Development Workflow
-
-### Running the app
-
-```bash
-# Start all services (PostgreSQL + Mailpit)
-docker compose up -d
-
-# Start Next.js dev server
-pnpm dev
-
-# Or run both database and dev server
-pnpm db:push && pnpm dev
-```
-
-### Database Management
-
-```bash
-# Push schema changes to database (development)
-pnpm db:push
-
-# Create a migration (production)
-pnpm db:migrate
-
-# Open Prisma Studio (database GUI)
-pnpm db:studio
-```
-
-### Email Testing
-
-All emails sent in development are caught by Mailpit:
-- **SMTP Server**: localhost:1025
-- **Web UI**: http://localhost:8025
-
-In production, set `SMTP_*` in `.env` to any SMTP provider (e.g. Gmail, Mailgun, SendGrid). No external account required for the boilerplate itself.
-
-## Authentication Flow
-
-1. **Registration** → `/auth/register`
-   - User fills form (name, email, password)
-   - Account created with `emailVerified: null`
-   - Verification email sent with 24-hour token
-
-2. **Email Verification** → `/auth/verify?token=xxx&email=xxx`
-   - User clicks link from email
-   - Token validated, `emailVerified` updated
-   - Welcome email sent
-
-3. **Login** → `/auth/login`
-   - Email + password (or OAuth)
-   - Email verification check (prevents unverified login)
-   - JWT session created, redirect to `/dashboard`
-
-4. **Password Reset** → `/auth/forgot-password` + `/auth/reset-password`
-   - User requests reset (email sent with 1-hour token)
-   - Clicks link, sets new password
-   - Token deleted, password updated
+- **Headers and CSP**: `apps/web/next.config.ts` sets a Content-Security-Policy plus `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy` and (outside development) `Strict-Transport-Security` on every route. The CSP keeps `'unsafe-inline'` for `script-src`/`style-src` so pages stay statically renderable; tightening it to a per-request nonce is documented inline in `next.config.ts`.
+- **Rate limiting**: `apps/web/lib/rate-limit.ts` is an in-memory, per-IP limiter applied to `/api/register`, `/api/forgot-password`, `/api/reset-password` and the credentials sign-in callback. It resets on restart and does not coordinate across instances; swap it for a shared store (for example Redis/Upstash) before running more than one instance.
+- **Secret scanning**: the `secrets` CI job runs gitleaks on every push and pull request, and GitHub push protection is enabled on this repository.
+- **Dependency audit**: the `audit` CI job runs `pnpm audit --audit-level=high`; Dependabot opens weekly grouped updates for npm and GitHub Actions.
+- Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
 
 ## Deployment
 
-### Netlify (Recommended for free tier)
-
+**Vercel**
 ```bash
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Deploy
-netlify deploy --build
+pnpm build && vercel --prod
 ```
+Add a managed PostgreSQL (Vercel Postgres or an external provider) and set the `.env.example` variables in the Vercel dashboard.
 
-**Environment Variables**: Add all `.env` variables in Netlify dashboard.
-
-**Database**: Use Docker PostgreSQL (same as local), or a managed PostgreSQL (e.g. Neon, Supabase) if you prefer.
-
-### Self-Hosted (VPS)
-
+**Self-hosted (VPS or container)**
 ```bash
-# Build for production
 pnpm build
-
-# Start production server
 pnpm start
 ```
+Run PostgreSQL alongside the app (`docker-compose.yml` covers local Postgres + Mailpit; run your own Postgres in production) and set environment variables via your process manager or container runtime.
 
-**Database**: PostgreSQL on the same VPS (Docker or native install).
+Before deploying: apply pending migrations against the production database with `pnpm --filter @repo/database exec prisma migrate deploy` (there is no dedicated package.json script for this; `db:migrate` runs `prisma migrate dev`, which is for local development only), set all required environment variables, and confirm `/api/health` returns `200` after the deploy.
 
 ## Tech Stack
 
 | Layer | Technology | Version |
 |-------|-----------|---------|
-| Framework | Next.js | ^15.1.6 |
-| Language | TypeScript | ^5.7.3 |
+| Framework | Next.js | ^16.3.6 |
+| Language | TypeScript | ^6.0.3 |
 | Auth | NextAuth.js | ^4.24.11 |
-| Database | Prisma + PostgreSQL | ^6.19.2 |
-| Email | Nodemailer + React Email | Latest |
-| UI | Shadcn + Tailwind CSS | Latest |
-| Forms | React Hook Form + Zod | Latest |
-| Payments | Stripe (opt-in) | Latest |
-| Monorepo | Turborepo + pnpm | Latest |
-
-## Scripts
-
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start Next.js dev server |
-| `pnpm build` | Build for production |
-| `pnpm start` | Start production server |
-| `pnpm lint` | Run ESLint |
-| `pnpm db:push` | Push Prisma schema to database |
-| `pnpm db:migrate` | Create database migration |
-| `pnpm db:studio` | Open Prisma Studio |
-
-## Deployment Checklist
-
-### Pre-Deployment
-
-- [ ] **Environment Variables**: Set all required env vars in production environment
-  - `DATABASE_URL` — PostgreSQL connection string
-  - `NEXTAUTH_SECRET` — Generate with `openssl rand -base64 32`
-  - `NEXTAUTH_URL` — Your production URL (e.g., https://app.example.com)
-  - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` — SMTP provider credentials
-  - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` — If using GitHub OAuth
-  - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` — If using Google OAuth
-  - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` — If using Stripe payments
-
-- [ ] **Database**: Run migrations on production database
-  ```bash
-  pnpm db:migrate deploy
-  ```
-
-- [ ] **Build**: Verify production build succeeds
-  ```bash
-  pnpm build
-  ```
-
-- [ ] **Tests**: Run full test suite
-  ```bash
-  pnpm test
-  ```
-
-- [ ] **Security**:
-  - [ ] Enable HTTPS (SSL/TLS certificate)
-  - [ ] Set secure cookies (NEXTAUTH_URL must be https://)
-  - [ ] Configure CORS if needed
-  - [ ] Review rate limiting settings in `lib/rate-limit.ts`
-  - [ ] Audit dependencies for vulnerabilities: `pnpm audit`
-
-- [ ] **Email**: Configure production SMTP provider
-  - Recommended: Resend, Mailgun, SendGrid, or Gmail SMTP
-  - Update `FROM_EMAIL` in email service
-
-- [ ] **OAuth** (if enabled):
-  - [ ] Add production callback URLs to GitHub/Google OAuth apps
-  - [ ] Update redirect URIs to match production domain
-
-- [ ] **Stripe** (if enabled):
-  - [ ] Switch to live API keys
-  - [ ] Configure webhook endpoint in Stripe Dashboard
-  - [ ] Test subscription flow end-to-end
-
-### Post-Deployment
-
-- [ ] **Health Check**: Verify `/api/health` endpoint returns 200
-- [ ] **Smoke Tests**:
-  - [ ] User registration works
-  - [ ] Email verification works
-  - [ ] Login works
-  - [ ] Password reset works
-  - [ ] OAuth login works (if enabled)
-  - [ ] Protected routes require auth
-  - [ ] Stripe checkout works (if enabled)
-
-- [ ] **Monitoring**:
-  - [ ] Set up uptime monitoring (e.g., UptimeRobot, Better Uptime)
-  - [ ] Monitor error logs
-  - [ ] Monitor database performance
-  - [ ] Set up alerts for 5xx errors
-
-- [ ] **Performance**:
-  - [ ] Verify page load times < 3s
-  - [ ] Check Lighthouse scores
-  - [ ] Enable Next.js caching strategies
-  - [ ] Configure CDN for static assets (if not using Vercel/Netlify)
-
-### Deployment Platforms
-
-**Vercel (Recommended)**
-```bash
-pnpm build && vercel --prod
-```
-- Auto-configures Next.js optimizations
-- Add PostgreSQL via Vercel Postgres or external provider
-- Add environment variables in Vercel Dashboard
-
-**Netlify**
-```bash
-pnpm build && netlify deploy --prod
-```
-- Use @netlify/plugin-nextjs
-- Add PostgreSQL via external provider (Supabase, Neon, etc.)
-- Add environment variables in Netlify Dashboard
-
-**Self-Hosted (Docker)**
-```bash
-docker build -t next-boilerplate .
-docker run -p 3000:3000 --env-file .env.production next-boilerplate
-```
-- Requires PostgreSQL accessible from container
-- Use docker-compose.yml for full stack deployment
+| Database | Prisma (`@prisma/adapter-pg`) + PostgreSQL | ^7.10.0 |
+| Email | Nodemailer + React Email | ^10.0.10 / ^1.0.12 |
+| UI | shadcn/ui + Tailwind CSS | ^4.3.3 |
+| Forms | React Hook Form + Zod | ^7.89.0 / ^4.6.5 |
+| Payments | Stripe (opt-in) | ^22.6.2 |
+| Monorepo | Turborepo + pnpm | ^2.11.4 / 12.6.0 |
+| Testing | Vitest + Playwright | ^5.0.2 / ^1.63.0 |
 
 ## Contributing
 
-This is a boilerplate template. Fork it and customize for your needs!
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, the checks CI runs, and commit conventions.
 
 ## License
 
-MIT
+MIT, see [LICENSE](LICENSE).
 
-## Support
-
-- **Documentation**: See [CLAUDE.md](CLAUDE.md) for AI-assisted development guide
-- **Issues**: [GitHub Issues](https://github.com/faizkhairi/next-boilerplate/issues)
-
----
-
-## Author
-
-**Faiz Khairi** — [faizkhairi.github.io](https://faizkhairi.github.io) — [@faizkhairi](https://github.com/faizkhairi)
+Author: Faiz Khairi ([faizkhairi.github.io](https://faizkhairi.github.io), [@faizkhairi](https://github.com/faizkhairi))

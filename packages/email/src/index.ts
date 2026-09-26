@@ -34,7 +34,7 @@ export async function sendVerificationEmail(
     to,
     subject: "Verify Your Email Address",
     html,
-    text: `Verify your email by visiting: ${verifyUrl} — This link expires in ${expiresIn}.`,
+    text: `Verify your email by visiting: ${verifyUrl}. This link expires in ${expiresIn}.`,
   });
 }
 
@@ -49,7 +49,7 @@ export async function sendPasswordResetEmail(
     to,
     subject: "Reset Your Password",
     html,
-    text: `Reset your password by visiting: ${resetUrl} — This link expires in ${expiresIn}.`,
+    text: `Reset your password by visiting: ${resetUrl}. This link expires in ${expiresIn}.`,
   });
 }
 
