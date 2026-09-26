@@ -23,7 +23,7 @@ Only the latest commit on `main` is supported. There are no maintained release b
 This boilerplate ships with, and CI enforces:
 
 - **Security headers and CSP** on every route (`apps/web/next.config.ts`): Content-Security-Policy, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, and HSTS outside development.
-- **Rate limiting** on auth endpoints (`apps/web/lib/rate-limit.ts`): register, forgot/reset password, and the credentials sign-in callback. It is in-memory and per-instance; use a shared store (for example Redis/Upstash) behind a load balancer.
+- **Rate limiting** on auth endpoints (`apps/web/lib/rate-limit.ts`): register, forgot/reset password, and the credentials sign-in callback. It keys on the client IP recorded by the outermost trusted proxy (`TRUSTED_PROXY_COUNT`), not the spoofable leftmost `X-Forwarded-For` entry. It is in-memory and per-instance; use a shared store (for example Redis/Upstash) behind a load balancer.
 - **Secret scanning**: gitleaks runs in CI on every push and pull request, and GitHub push protection is enabled on this repository.
 - **Dependency auditing**: `pnpm audit --audit-level=high` runs in CI, and Dependabot opens weekly grouped updates for npm and GitHub Actions.
 - **Password hashing** with bcrypt, and email verification enforced before login.

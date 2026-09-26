@@ -136,29 +136,42 @@ export function rateLimitResponse(
 }
 
 /**
- * Get client IP address from request
+ * Number of reverse proxies in front of the app that append to
+ * X-Forwarded-For (for example 1 for Vercel or a single nginx, 2 for a CDN
+ * in front of nginx). Read on every call so tests and deploys can change it.
  */
-function getRequestIP(request: NextRequest): string | null {
-  // Try various IP headers (in order of preference)
-  const ipHeaders = [
-    'x-forwarded-for',
-    'x-real-ip',
-    'cf-connecting-ip', // Cloudflare
-    'x-client-ip',
-  ]
+function trustedProxyCount(): number {
+  const parsed = Number.parseInt(process.env.TRUSTED_PROXY_COUNT ?? '', 10)
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1
+}
 
-  for (const header of ipHeaders) {
-    const value = request.headers.get(header)
-    if (value) {
-      // x-forwarded-for can contain multiple IPs, take the first one.
-      // `value` is truthy here, so split(',') always yields at least one
-      // element; fall back to `value` itself only to satisfy the type.
-      const first = value.split(',')[0] ?? value
-      return first.trim()
-    }
+/**
+ * Get the client IP address the rate limiter keys on.
+ *
+ * Each proxy appends the address it received the request from to the RIGHT
+ * of X-Forwarded-For, and everything to the left of that is whatever the
+ * client sent. Reading the leftmost entry would let a client pick a fresh
+ * rate limit bucket per request, so this reads the entry written by the
+ * outermost trusted proxy: `TRUSTED_PROXY_COUNT` places from the right.
+ * Behind no proxy at all, every header is client-controlled; run the app
+ * behind one in production.
+ */
+export function getRequestIP(request: NextRequest): string | null {
+  const forwardedFor = request.headers.get('x-forwarded-for')
+  if (forwardedFor) {
+    const hops = forwardedFor
+      .split(',')
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+    const index = Math.max(0, hops.length - trustedProxyCount())
+    const ip = hops[index]
+    if (ip) return ip
   }
 
-  return null
+  // Set by nginx (`proxy_set_header X-Real-IP $remote_addr`) and Vercel,
+  // both of which overwrite any client-sent value.
+  const realIp = request.headers.get('x-real-ip')?.trim()
+  return realIp || null
 }
 
 /**
