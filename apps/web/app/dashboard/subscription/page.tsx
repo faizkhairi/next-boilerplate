@@ -144,7 +144,6 @@ export default function SubscriptionPage() {
           <ul className="text-sm space-y-1 ml-4">
             <li>• STRIPE_SECRET_KEY</li>
             <li>• STRIPE_WEBHOOK_SECRET</li>
-            <li>• NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</li>
           </ul>
           <p className="text-sm text-muted-foreground mt-4">
             Replace <code className="bg-muted px-1 py-0.5 rounded">price_pro</code> and{" "}

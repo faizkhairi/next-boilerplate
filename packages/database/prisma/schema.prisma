@@ -1,5 +1,5 @@
 // =============================================================================
-// Prisma Schema — next-boilerplate
+// Prisma Schema: next-boilerplate
 // =============================================================================
 // Models designed for NextAuth.js + SaaS features.
 // Run `pnpm db:push` to sync with database, `pnpm db:migrate` for migrations.
