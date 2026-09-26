@@ -114,12 +114,15 @@ describe("getRequestIP", () => {
     expect(getRequestIP(request)).toBe("203.0.113.7");
   });
 
-  it("uses the leftmost entry when there are fewer hops than trusted proxies", () => {
-    vi.stubEnv("TRUSTED_PROXY_COUNT", "3");
+  it("ignores a header with fewer hops than trusted proxies", () => {
+    vi.stubEnv("TRUSTED_PROXY_COUNT", "2");
+    // A request that skipped the CDN: its only entry is client-chosen.
+    const request = requestWithHeaders({
+      "x-forwarded-for": "1.2.3.4",
+      "x-real-ip": "5.6.7.8",
+    });
 
-    expect(getRequestIP(requestWithHeaders({ "x-forwarded-for": "203.0.113.7" }))).toBe(
-      "203.0.113.7"
-    );
+    expect(getRequestIP(request)).toBeNull();
   });
 
   it("falls back to X-Real-IP when X-Forwarded-For is absent", () => {
