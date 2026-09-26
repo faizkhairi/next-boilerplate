@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { NextRequest } from "next/server";
-import { checkRateLimit, rateLimitResponse, RateLimitPresets } from "../rate-limit";
+import { checkRateLimit, getRequestIP, rateLimitResponse, RateLimitPresets } from "../rate-limit";
 
 function requestFromIp(ip: string): NextRequest {
   return new NextRequest("http://localhost/api/test", {
@@ -77,6 +77,57 @@ describe("checkRateLimit", () => {
     const result = checkRateLimit(request, config);
 
     expect(result.success).toBe(true);
+  });
+});
+
+describe("getRequestIP", () => {
+  function requestWithHeaders(headers: Record<string, string>): NextRequest {
+    return new NextRequest("http://localhost/api/test", { headers });
+  }
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("ignores client-supplied X-Forwarded-For entries left of the proxy's", () => {
+    const request = requestWithHeaders({ "x-forwarded-for": "1.1.1.1, 203.0.113.7" });
+
+    expect(getRequestIP(request)).toBe("203.0.113.7");
+  });
+
+  it("keeps a spoofing client in one bucket", () => {
+    const config = { maxRequests: 2, windowMs: 60_000 };
+    const spoofed = (fake: string) =>
+      requestWithHeaders({ "x-forwarded-for": `${fake}, 198.51.100.9` });
+
+    expect(checkRateLimit(spoofed("10.1.1.1"), config).success).toBe(true);
+    expect(checkRateLimit(spoofed("10.2.2.2"), config).success).toBe(true);
+    expect(checkRateLimit(spoofed("10.3.3.3"), config).success).toBe(false);
+  });
+
+  it("honours TRUSTED_PROXY_COUNT for a CDN in front of a proxy", () => {
+    vi.stubEnv("TRUSTED_PROXY_COUNT", "2");
+    const request = requestWithHeaders({
+      "x-forwarded-for": "1.1.1.1, 203.0.113.7, 10.0.0.2",
+    });
+
+    expect(getRequestIP(request)).toBe("203.0.113.7");
+  });
+
+  it("uses the leftmost entry when there are fewer hops than trusted proxies", () => {
+    vi.stubEnv("TRUSTED_PROXY_COUNT", "3");
+
+    expect(getRequestIP(requestWithHeaders({ "x-forwarded-for": "203.0.113.7" }))).toBe(
+      "203.0.113.7"
+    );
+  });
+
+  it("falls back to X-Real-IP when X-Forwarded-For is absent", () => {
+    expect(getRequestIP(requestWithHeaders({ "x-real-ip": "203.0.113.8" }))).toBe("203.0.113.8");
+  });
+
+  it("returns null when no IP header is present", () => {
+    expect(getRequestIP(requestWithHeaders({}))).toBeNull();
   });
 });
 

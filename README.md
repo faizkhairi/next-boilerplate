@@ -86,6 +86,7 @@ All variables are documented with placeholders in `.env.example`.
 | `NEXT_PUBLIC_GOOGLE_ENABLED` | Optional | Client-side flag that shows the Google login button |
 | `STRIPE_SECRET_KEY` | Optional | Enables Stripe checkout and subscription management |
 | `STRIPE_WEBHOOK_SECRET` | Optional | Verifies incoming Stripe webhook signatures |
+| `TRUSTED_PROXY_COUNT` | Optional | Reverse proxies in front of the app that append to `X-Forwarded-For` (default `1`); sets which entry the rate limiter trusts as the client IP |
 | `PORT` | Optional | Overrides the port `next dev`/`next start` and the Playwright webServer listen on (default `3000`) |
 
 ## Scripts
@@ -167,7 +168,7 @@ next-boilerplate/
 ## Security
 
 - **Headers and CSP**: `apps/web/next.config.ts` sets a Content-Security-Policy plus `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy` and (outside development) `Strict-Transport-Security` on every route. The CSP keeps `'unsafe-inline'` for `script-src`/`style-src` so pages stay statically renderable; tightening it to a per-request nonce is documented inline in `next.config.ts`.
-- **Rate limiting**: `apps/web/lib/rate-limit.ts` is an in-memory, per-IP limiter applied to `/api/register`, `/api/forgot-password`, `/api/reset-password` and the credentials sign-in callback. It resets on restart and does not coordinate across instances; swap it for a shared store (for example Redis/Upstash) before running more than one instance.
+- **Rate limiting**: `apps/web/lib/rate-limit.ts` is an in-memory, per-IP limiter applied to `/api/register`, `/api/forgot-password`, `/api/reset-password` and the credentials sign-in callback. It keys on the client IP recorded by your outermost trusted proxy (set `TRUSTED_PROXY_COUNT`), so run the app behind a proxy in production: without one, every IP header is client-controlled. It resets on restart and does not coordinate across instances; swap it for a shared store (for example Redis/Upstash) before running more than one instance.
 - **Secret scanning**: the `secrets` CI job runs gitleaks on every push and pull request, and GitHub push protection is enabled on this repository.
 - **Dependency audit**: the `audit` CI job runs `pnpm audit --audit-level=high`; Dependabot opens weekly grouped updates for npm and GitHub Actions.
 - Report vulnerabilities as described in [SECURITY.md](SECURITY.md).
