@@ -58,6 +58,14 @@ export async function POST(request: NextRequest) {
           // items on different billing cycles), so read it off the first item.
           const subscriptionItem = subscription.items.data[0];
 
+          if (!subscriptionItem) {
+            logger.error(
+              { subscriptionId: subscription.id },
+              "Subscription has no items, cannot record billing period"
+            );
+            break;
+          }
+
           // Create subscription record
           await prisma.subscription.create({
             data: {
@@ -78,6 +86,14 @@ export async function POST(request: NextRequest) {
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
         const subscriptionItem = subscription.items.data[0];
+
+        if (!subscriptionItem) {
+          logger.error(
+            { subscriptionId: subscription.id },
+            "Subscription has no items, cannot record billing period"
+          );
+          break;
+        }
 
         await prisma.subscription.update({
           where: { stripeSubscriptionId: subscription.id },

@@ -17,3 +17,16 @@ allowBuilds:
   esbuild: true
   prisma: true
   unrs-resolver: true
+overrides:
+  # GHSA-fx2h-pf6j-xcff: vite <=6.4.2 allows server.fs.deny bypass on
+  # Windows. Scoped to vitepress's own vite (docs app dev server only);
+  # apps/web keeps its own direct vite ^8.3.1 devDependency.
+  vitepress>vite: ^6.4.3
+  '@vitejs/plugin-vue>vite': ^6.4.3
+  # GHSA-ggr8-5vv4-36mx: deepmerge-ts <8.0.0 stack exhaustion on recursive
+  # object graphs, pulled in transitively by Prisma's config loader.
+  deepmerge-ts: ^8.0.0
+  # GHSA-3f6p-5ww8-9rcr: mysql2 <3.22.0 leaks credentials via an auth
+  # plugin downgrade. Pulled in by Prisma's CLI even though this project
+  # uses the Postgres adapter.
+  mysql2: ^3.22.0

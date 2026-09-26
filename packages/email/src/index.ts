@@ -1,5 +1,5 @@
 import { render } from "@react-email/components";
-import { sendEmail, type SendEmailOptions } from "./mailer";
+import { sendEmail } from "./mailer";
 import WelcomeEmail from "./templates/welcome";
 import VerifyEmail from "./templates/verify-email";
 import ResetPasswordEmail from "./templates/reset-password";

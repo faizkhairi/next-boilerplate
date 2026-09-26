@@ -22,7 +22,8 @@ if (typeof setInterval !== 'undefined') {
   setInterval(() => {
     const now = Date.now()
     Object.keys(store).forEach((key) => {
-      if (store[key].resetTime < now) {
+      const entry = store[key]
+      if (entry && entry.resetTime < now) {
         delete store[key]
       }
     })
@@ -149,8 +150,11 @@ function getRequestIP(request: NextRequest): string | null {
   for (const header of ipHeaders) {
     const value = request.headers.get(header)
     if (value) {
-      // x-forwarded-for can contain multiple IPs, take the first one
-      return value.split(',')[0].trim()
+      // x-forwarded-for can contain multiple IPs, take the first one.
+      // `value` is truthy here, so split(',') always yields at least one
+      // element; fall back to `value` itself only to satisfy the type.
+      const first = value.split(',')[0] ?? value
+      return first.trim()
     }
   }
 
