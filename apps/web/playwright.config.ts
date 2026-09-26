@@ -39,8 +39,10 @@ export default defineConfig({
   webServer: {
     // CI runs against the production build (already built by the workflow
     // step before this), so it exercises the real bundle instead of the
-    // Turbopack dev server.
-    command: process.env.CI ? "pnpm start" : "pnpm dev",
+    // Turbopack dev server. `next` is called directly rather than through
+    // `pnpm start`: the pnpm wrapper does not pass the shutdown signal on,
+    // so teardown hung until Playwright's 10 minute limit.
+    command: process.env.CI ? "next start" : "next dev",
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
