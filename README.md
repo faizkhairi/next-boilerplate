@@ -144,7 +144,7 @@ next-boilerplate/
 ├── apps/
 │   ├── web/                      # Next.js 16 application
 │   │   ├── app/
-│   │   │   ├── (auth)/           # Login, register, forgot/reset password, verify
+│   │   │   ├── auth/             # /auth/*: login, register, forgot/reset password, verify
 │   │   │   ├── api/              # Route handlers (auth, register, health, stripe, admin)
 │   │   │   └── dashboard/        # Protected routes, incl. the Stripe subscription page
 │   │   ├── components/ui/        # shadcn/ui components

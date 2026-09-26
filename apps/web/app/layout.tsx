@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Next Boilerplate",
-  description: "Production-ready Next.js 15 boilerplate with zero external dependencies",
+  description: "Next.js 16 monorepo template with auth, email, payments and docs",
 };
 
 export default function RootLayout({

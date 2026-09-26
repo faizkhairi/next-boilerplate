@@ -32,7 +32,7 @@ next-boilerplate/
 ├── apps/
 │   └── web/                      # Next.js 16 application
 │       ├── app/
-│       │   ├── (auth)/           # Auth routes (login, register, etc.)
+│       │   ├── auth/             # Auth pages under /auth/* (login, register, etc.)
 │       │   ├── api/              # API routes
 │       │   │   └── auth/[...nextauth]/  # NextAuth.js handler
 │       │   ├── dashboard/        # Protected routes
@@ -84,11 +84,11 @@ next-boilerplate/
 
 ## Key Conventions
 
-### 1. Route Groups (App Router)
+### 1. Route Segments and Shared Layouts (App Router)
 
 ```typescript
 app/
-├── (auth)/          // Shared layout for auth pages (centered card)
+├── auth/            // /auth/* pages, shared layout.tsx (centered card)
 │   ├── login/
 │   ├── register/
 │   ├── forgot-password/
@@ -99,7 +99,7 @@ app/
     └── page.tsx
 ```
 
-**Pattern:** Use route groups `(name)` for shared layouts without affecting URL structure.
+**Pattern:** A folder's `layout.tsx` wraps every page below it. `auth/` is a real URL segment because every link, redirect and email in the app points at `/auth/*`. Use a route group `(name)` only when you want a shared layout WITHOUT a URL segment.
 
 ### 2. Server vs. Client Components
 

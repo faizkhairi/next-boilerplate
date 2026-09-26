@@ -7,7 +7,7 @@ export default function Home() {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Next.js 16 Boilerplate</h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Production-ready with zero external dependencies
+            Auth, email, payments and docs in one monorepo
           </p>
           <div className="flex gap-4 justify-center">
             <Link
