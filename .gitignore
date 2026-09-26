@@ -11,6 +11,7 @@ coverage/
 out/
 build/
 dist/
+*.tsbuildinfo
 
 # Production
 *.log
@@ -45,3 +46,4 @@ Thumbs.db
 # Prisma
 *.db
 *.db-journal
+packages/database/src/generated/

@@ -13,7 +13,7 @@ import { logError } from '@/lib/logger'
  * @returns {403} Forbidden
  * @returns {500} Internal server error
  */
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     // Require admin role
     await requireRole(UserRole.ADMIN)

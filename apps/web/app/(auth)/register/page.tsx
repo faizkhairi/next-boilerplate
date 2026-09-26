@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -19,7 +18,6 @@ import {
 import { registerSchema, type RegisterInput } from "@/lib/validations";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +48,7 @@ export default function RegisterPage() {
       } else {
         setSuccess(true);
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -63,7 +61,7 @@ export default function RegisterPage() {
         <CardHeader>
           <CardTitle>Check Your Email</CardTitle>
           <CardDescription>
-            We've sent a verification link to your email address. Please check
+            We&apos;ve sent a verification link to your email address. Please check
             your inbox and click the link to verify your account.
           </CardDescription>
         </CardHeader>

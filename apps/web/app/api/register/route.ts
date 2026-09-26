@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { registerUser } from "@/lib/auth-utils";
 import { registerSchema } from "@/lib/validations";
 import { logError } from "@/lib/logger";
-import { checkRateLimit, RateLimitPresets } from "@/lib/ratelimit";
+import { checkRateLimit, RateLimitPresets } from "@/lib/rate-limit";
 
 /**
  * POST /api/register

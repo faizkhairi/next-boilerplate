@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { signOut } from "next-auth/react";
 import {
   Card,
   CardContent,
@@ -81,7 +80,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground">
-              This is a production-ready Next.js 15 boilerplate with zero external dependencies.
+              This is a Next.js 16 boilerplate with no required third-party SaaS accounts.
               Customize it to build your SaaS application.
             </p>
           </CardContent>

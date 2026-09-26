@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { logError } from '@/lib/logger'
@@ -12,6 +13,8 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const router = useRouter()
+
   useEffect(() => {
     // Log error to structured logging system
     logError(error, { digest: error.digest })
@@ -44,7 +47,7 @@ export default function Error({
             <Button onClick={reset} className="flex-1">
               Try Again
             </Button>
-            <Button variant="outline" onClick={() => window.location.href = '/'} className="flex-1">
+            <Button variant="outline" onClick={() => router.push('/')} className="flex-1">
               Go Home
             </Button>
           </div>

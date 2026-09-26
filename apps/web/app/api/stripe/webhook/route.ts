@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { constructWebhookEvent } from "@repo/payments/stripe";
+import { constructWebhookEvent, getStripeClient } from "@repo/payments/stripe";
 import { prisma } from "@/lib/db";
 import { logError, logger } from "@/lib/logger";
 import Stripe from "stripe";
@@ -50,8 +50,13 @@ export async function POST(request: NextRequest) {
           }
 
           // Retrieve the subscription details
-          const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+          const stripe = getStripeClient();
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+          // Stripe v22 moved current_period_start/end from the subscription
+          // itself to each subscription item (a subscription can now have
+          // items on different billing cycles), so read it off the first item.
+          const subscriptionItem = subscription.items.data[0];
 
           // Create subscription record
           await prisma.subscription.create({
@@ -59,10 +64,10 @@ export async function POST(request: NextRequest) {
               userId,
               stripeSubscriptionId: subscription.id,
               stripeCustomerId: subscription.customer as string,
-              stripePriceId: subscription.items.data[0].price.id,
+              stripePriceId: subscriptionItem.price.id,
               status: subscription.status,
-              currentPeriodStart: new Date(subscription.current_period_start * 1000),
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+              currentPeriodStart: new Date(subscriptionItem.current_period_start * 1000),
+              currentPeriodEnd: new Date(subscriptionItem.current_period_end * 1000),
               cancelAtPeriodEnd: subscription.cancel_at_period_end,
             },
           });
@@ -72,13 +77,14 @@ export async function POST(request: NextRequest) {
 
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
+        const subscriptionItem = subscription.items.data[0];
 
         await prisma.subscription.update({
           where: { stripeSubscriptionId: subscription.id },
           data: {
             status: subscription.status,
-            currentPeriodStart: new Date(subscription.current_period_start * 1000),
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            currentPeriodStart: new Date(subscriptionItem.current_period_start * 1000),
+            currentPeriodEnd: new Date(subscriptionItem.current_period_end * 1000),
             cancelAtPeriodEnd: subscription.cancel_at_period_end,
           },
         });
