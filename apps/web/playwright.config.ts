@@ -7,11 +7,15 @@ export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : undefined,
-  // In CI, never serve the HTML report (it would wait for Ctrl+C) and add
-  // GitHub annotations; the report folder is still uploaded on failure.
-  reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "html",
+  // Fail the run (and upload the report) well before the CI job timeout.
+  globalTimeout: process.env.CI ? 10 * 60_000 : undefined,
+  // In CI: per-test lines in the log, GitHub annotations, and an HTML report
+  // that is written but never served (serving would wait for Ctrl+C).
+  reporter: process.env.CI
+    ? [["list"], ["github"], ["html", { open: "never" }]]
+    : "html",
   use: {
     baseURL,
     trace: "on-first-retry",
