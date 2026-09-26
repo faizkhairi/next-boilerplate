@@ -1,6 +1,6 @@
 export default {
   title: 'next-boilerplate',
-  description: 'Documentation for the Next.js 15 zero-dependency boilerplate',
+  description: 'Documentation for the Next.js 16 monorepo boilerplate',
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },

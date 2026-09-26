@@ -1,6 +1,6 @@
 # next-boilerplate
 
-Documentation for the **zero-dependency** Next.js 16 boilerplate.
+Documentation for the Next.js 16 monorepo boilerplate. It runs without third-party accounts: auth, email and the database are self-hosted, and Stripe is opt-in.
 
 ## Stack
 
