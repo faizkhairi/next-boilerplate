@@ -9,7 +9,8 @@
     "./templates/*": "./src/templates/*"
   },
   "scripts": {
-    "dev": "email dev"
+    "dev": "email dev",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@react-email/components": "^1.0.12",

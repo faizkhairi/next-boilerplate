@@ -31,8 +31,12 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "pnpm dev",
+    // CI runs against the production build (already built by the workflow
+    // step before this), so it exercises the real bundle instead of the
+    // Turbopack dev server.
+    command: process.env.CI ? "pnpm start" : "pnpm dev",
     url: baseURL,
     reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
   },
 });

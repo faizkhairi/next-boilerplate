@@ -4,7 +4,7 @@ test.describe("Authentication Flow", () => {
   test("landing page shows auth buttons", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Next.js 15 Boilerplate" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Next.js 16 Boilerplate" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Sign In" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Sign Up" })).toBeVisible();
   });
