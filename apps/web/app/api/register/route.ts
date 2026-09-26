@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { registerUser } from "@/lib/auth-utils";
 import { registerSchema } from "@/lib/validations";
 import { logError } from "@/lib/logger";
-import { checkRateLimit, RateLimitPresets } from "@/lib/rate-limit";
+import { checkRateLimit, rateLimitResponse, RateLimitPresets } from "@/lib/rate-limit";
 
 /**
  * POST /api/register
@@ -28,17 +28,7 @@ export async function POST(request: NextRequest) {
   const rateLimit = checkRateLimit(request, RateLimitPresets.auth);
 
   if (!rateLimit.success) {
-    return NextResponse.json(
-      { error: RateLimitPresets.auth.message },
-      {
-        status: 429,
-        headers: {
-          'X-RateLimit-Limit': rateLimit.limit.toString(),
-          'X-RateLimit-Remaining': rateLimit.remaining.toString(),
-          'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
-        },
-      }
-    );
+    return rateLimitResponse(rateLimit, RateLimitPresets.auth.message);
   }
 
   try {

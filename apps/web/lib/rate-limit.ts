@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { logAudit } from './logger'
 
 /**
@@ -106,6 +106,32 @@ export function checkRateLimit(
     remaining,
     reset: store[key].resetTime,
   }
+}
+
+/**
+ * Build a 429 response for a rate-limited request.
+ *
+ * Always includes `Retry-After` (seconds, per RFC 9110) alongside the
+ * `X-RateLimit-*` headers so well-behaved clients back off correctly.
+ */
+export function rateLimitResponse(
+  result: RateLimitResult,
+  message = 'Too many requests. Please try again later.'
+): NextResponse {
+  const retryAfterSeconds = Math.max(0, Math.ceil((result.reset - Date.now()) / 1000))
+
+  return NextResponse.json(
+    { error: message },
+    {
+      status: 429,
+      headers: {
+        'Retry-After': retryAfterSeconds.toString(),
+        'X-RateLimit-Limit': result.limit.toString(),
+        'X-RateLimit-Remaining': result.remaining.toString(),
+        'X-RateLimit-Reset': new Date(result.reset).toISOString(),
+      },
+    }
+  )
 }
 
 /**
