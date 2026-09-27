@@ -1,6 +1,16 @@
-import { describe, it, expect, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
-import { checkRateLimit, getRequestIP, rateLimitResponse, RateLimitPresets } from "../rate-limit";
+import {
+  checkRateLimit,
+  getRequestIP,
+  rateLimitResponse,
+  RateLimitPresets,
+  resetRateLimitStore,
+} from "../rate-limit";
+
+beforeEach(() => {
+  resetRateLimitStore();
+});
 
 function requestFromIp(ip: string): NextRequest {
   return new NextRequest("http://localhost/api/test", {
@@ -71,6 +81,16 @@ describe("checkRateLimit", () => {
     expect(checkRateLimit(requestFromIp(ip), config).success).toBe(true);
   });
 
+  it("keeps a separate budget per route for the same client", () => {
+    const at = (path: string) =>
+      new NextRequest(`http://localhost${path}`, { headers: { "x-forwarded-for": "10.0.0.9" } });
+    const one = { maxRequests: 1, windowMs: 1000 };
+
+    expect(checkRateLimit(at("/api/register"), one).success).toBe(true);
+    expect(checkRateLimit(at("/api/register"), one).success).toBe(false);
+    expect(checkRateLimit(at("/api/forgot-password"), one).success).toBe(true);
+  });
+
   it("falls back to 'unknown' when no IP header is present", () => {
     const request = new NextRequest("http://localhost/api/test");
 
@@ -87,7 +107,6 @@ describe("getRequestIP", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
-    vi.useRealTimers();
   });
 
   it("ignores client-supplied X-Forwarded-For entries left of the proxy's", () => {
@@ -146,10 +165,6 @@ describe("getRequestIP", () => {
 
   it("keeps a client rotating X-Forwarded-For in one bucket when TRUSTED_PROXY_COUNT is 0", () => {
     vi.stubEnv("TRUSTED_PROXY_COUNT", "0");
-    // The store is module-level and an earlier test used the shared 'unknown'
-    // bucket, so start past any window it opened.
-    vi.useFakeTimers();
-    vi.setSystemTime(Date.now() + 24 * 60 * 60 * 1000);
     const config = { maxRequests: 2, windowMs: 60_000 };
     const direct = (fake: string) => requestWithHeaders({ "x-forwarded-for": fake });
 
