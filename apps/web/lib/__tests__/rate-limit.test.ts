@@ -87,6 +87,7 @@ describe("getRequestIP", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.useRealTimers();
   });
 
   it("ignores client-supplied X-Forwarded-For entries left of the proxy's", () => {
@@ -131,6 +132,37 @@ describe("getRequestIP", () => {
 
   it("returns null when no IP header is present", () => {
     expect(getRequestIP(requestWithHeaders({}))).toBeNull();
+  });
+
+  it("ignores every IP header when TRUSTED_PROXY_COUNT is 0", () => {
+    vi.stubEnv("TRUSTED_PROXY_COUNT", "0");
+    const request = requestWithHeaders({
+      "x-forwarded-for": "1.1.1.1, 203.0.113.7",
+      "x-real-ip": "5.6.7.8",
+    });
+
+    expect(getRequestIP(request)).toBeNull();
+  });
+
+  it("keeps a client rotating X-Forwarded-For in one bucket when TRUSTED_PROXY_COUNT is 0", () => {
+    vi.stubEnv("TRUSTED_PROXY_COUNT", "0");
+    // The store is module-level and an earlier test used the shared 'unknown'
+    // bucket, so start past any window it opened.
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.now() + 24 * 60 * 60 * 1000);
+    const config = { maxRequests: 2, windowMs: 60_000 };
+    const direct = (fake: string) => requestWithHeaders({ "x-forwarded-for": fake });
+
+    expect(checkRateLimit(direct("10.1.1.1"), config).success).toBe(true);
+    expect(checkRateLimit(direct("10.2.2.2"), config).success).toBe(true);
+    expect(checkRateLimit(direct("10.3.3.3"), config).success).toBe(false);
+  });
+
+  it("ignores a negative TRUSTED_PROXY_COUNT and defaults to one proxy", () => {
+    vi.stubEnv("TRUSTED_PROXY_COUNT", "-1");
+    const request = requestWithHeaders({ "x-forwarded-for": "1.1.1.1, 203.0.113.7" });
+
+    expect(getRequestIP(request)).toBe("203.0.113.7");
   });
 });
 
