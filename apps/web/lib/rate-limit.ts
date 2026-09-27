@@ -64,7 +64,9 @@ export function checkRateLimit(
   const ip = getRequestIP(request) || 'unknown'
 
   const now = Date.now()
-  const key = `ratelimit:${ip}`
+  // Scoped per route, so attempts on one auth endpoint do not spend the
+  // budget of another (and a shared 'unknown' bucket stays per route).
+  const key = `ratelimit:${request.nextUrl.pathname}:${ip}`
 
   // Initialize or get existing rate limit data
   if (!store[key] || store[key].resetTime < now) {
@@ -107,6 +109,11 @@ export function checkRateLimit(
     remaining,
     reset: store[key].resetTime,
   }
+}
+
+/** Clears every counter. Tests only. */
+export function resetRateLimitStore(): void {
+  for (const key of Object.keys(store)) delete store[key]
 }
 
 /**
@@ -160,8 +167,8 @@ function trustedProxyCount(): number {
  * `TRUSTED_PROXY_COUNT=0` means no proxy: every IP header is client-written,
  * so both are ignored. Next.js route handlers do not expose the socket
  * address, so this returns null and all clients share the 'unknown' bucket
- * (one global limit). Run the app behind a proxy in production to
- * get per-client limits.
+ * of each route: one client can use up that route's limit for everyone.
+ * Run the app behind a proxy in production to get per-client limits.
  */
 export function getRequestIP(request: NextRequest): string | null {
   if (trustedProxyCount() === 0) return null
