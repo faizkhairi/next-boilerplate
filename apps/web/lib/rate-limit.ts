@@ -138,11 +138,12 @@ export function rateLimitResponse(
 /**
  * Number of reverse proxies in front of the app that append to
  * X-Forwarded-For (for example 1 for Vercel or a single nginx, 2 for a CDN
- * in front of nginx). Read on every call so tests and deploys can change it.
+ * in front of nginx), or 0 when clients connect directly. Read on every call
+ * so tests and deploys can change it.
  */
 function trustedProxyCount(): number {
   const parsed = Number.parseInt(process.env.TRUSTED_PROXY_COUNT ?? '', 10)
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : 1
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : 1
 }
 
 /**
@@ -154,10 +155,17 @@ function trustedProxyCount(): number {
  * rate limit bucket per request, so this reads the entry written by the
  * outermost trusted proxy: `TRUSTED_PROXY_COUNT` places from the right.
  * A header with fewer entries than that bypassed a trusted proxy and is
- * ignored. Behind no proxy at all, every header is client-controlled; run the
- * app behind one in production.
+ * ignored.
+ *
+ * `TRUSTED_PROXY_COUNT=0` means no proxy: every IP header is client-written,
+ * so both are ignored. Next.js route handlers do not expose the socket
+ * address, so this returns null and all clients share the 'unknown' bucket
+ * (one global limit). Run the app behind a proxy in production to
+ * get per-client limits.
  */
 export function getRequestIP(request: NextRequest): string | null {
+  if (trustedProxyCount() === 0) return null
+
   const forwardedFor = request.headers.get('x-forwarded-for')
   if (forwardedFor) {
     const hops = forwardedFor
