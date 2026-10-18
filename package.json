@@ -20,7 +20,7 @@
     "db:studio": "pnpm --filter @repo/database db:studio"
   },
   "devDependencies": {
-    "turbo": "^2.11.4"
+    "turbo": "^2.11.8"
   },
   "packageManager": "pnpm@12.6.0",
   "engines": {

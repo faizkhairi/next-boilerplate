@@ -14,13 +14,13 @@
   },
   "dependencies": {
     "@react-email/components": "^1.0.12",
-    "nodemailer": "^10.0.10",
-    "react": "^19.3.0",
-    "react-email": "^6.11.0"
+    "nodemailer": "^10.1.1",
+    "react": "^19.3.1",
+    "react-email": "^6.11.2"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^24.19.0",
+    "@types/node": "^24.19.2",
     "@types/nodemailer": "^8.0.2",
     "@types/react": "^19.3.0",
     "typescript": "^6.0.3"
