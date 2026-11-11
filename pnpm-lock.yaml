@@ -273,8 +273,8 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2(vitest@5.0.2)
       '@vitest/ui':
-        specifier: ^5.0.2
-        version: 5.0.2(vitest@5.0.2)
+        specifier: ^5.0.5
+        version: 5.0.5(vitest@5.0.2)
       eslint:
         specifier: ^9.39.5
         version: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
@@ -301,7 +301,7 @@ importers:
         version: 8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0)
       vitest:
         specifier: ^5.0.2
-        version: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
+        version: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.5)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
 
   packages/database:
     dependencies:
@@ -341,7 +341,7 @@ importers:
         version: 19.3.0
       react-email:
         specifier: ^6.11.0
-        version: 6.11.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 6.11.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(supports-color@7.2.0)
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
@@ -2523,19 +2523,19 @@ packages:
       vite:
         optional: true
 
-  '@vitest/pretty-format@5.0.2':
-    resolution: {integrity: sha512-YHM+mQQ7N1ROHMugJ7P/M+fC/q1G4zs/iAMZZCvhHcY8WkwPQcXBHD+z18oz+808Cfa12K7jOr3XPQMcLIovjw==}
+  '@vitest/pretty-format@5.0.5':
+    resolution: {integrity: sha512-24sSdIlMA9DVPXnYiB9siwU0bTd887Y9jX3+vabztCSsvHwo7ipvJ/a2L3Rljw8+2rK1f5fCj3h5U9I/Jsqgbw==}
 
   '@vitest/spy@5.0.2':
     resolution: {integrity: sha512-Ijc7T1nT9efNb5LxvjaBrEqw3f/QwUv5EE0nKqZxgqsaV/FxAAZ8baGylA8X/Z2oS4Lp+K74Jr6dTJsDKxJDeg==}
 
-  '@vitest/ui@5.0.2':
-    resolution: {integrity: sha512-FRGWhLK/S+aaAtty/5d+jTtY5l+9pGNcjz6IHbyUiP3VWs6a+zIgU4lc1SzWCR7H+OXgetAI06i/VpCWQmVorQ==}
+  '@vitest/ui@5.0.5':
+    resolution: {integrity: sha512-dCoGUOdgmCaSB2g+WQ/spPCBkytAWdNUkFSXY4z+eYp2d8JEOY8v0uDRaJTG9qf/kTlTVZ4CuYMYMz/f1HS/qQ==}
     peerDependencies:
-      vitest: 5.0.2
+      vitest: 5.0.5
 
-  '@vitest/utils@5.0.2':
-    resolution: {integrity: sha512-mgpUtxFhKeOKVaArBVHNJGdYHAeRh135o59l13uVmPUCS1OUtis5pBqXEgE25iqRgFqEBwXvJlkhknRsYnMeqg==}
+  '@vitest/utils@5.0.5':
+    resolution: {integrity: sha512-/rBu7gzLDQI/SC79Tn98b5DwOgaHU/Gt4I9OVeP3YofzNaYtbImRCOJQmT1S6vOJg9gEIlWC+r3QxKkjuSa1nQ==}
 
   '@vue/compiler-core@3.5.43':
     resolution: {integrity: sha512-zdiLhnbe1QQqgDT8xZMpNmyqZ3qlI+/Q/FHQco57Kwl/b05HhCzN6eVGN9QU9rbga4CrS0H5SYY8VGHZCt/1Hg==}
@@ -3356,8 +3356,8 @@ packages:
   fast-safe-stringify@2.1.1:
     resolution: {integrity: sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==}
 
-  fast-uri@3.1.8:
-    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
+  fast-uri@3.1.9:
+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
 
   fastq@1.20.3:
     resolution: {integrity: sha512-XKv5nnLs6nLF71NgiKJLIZFLkPyIEuOselLG7ujZnGrRfQK8HpvY+WqKhAJUAdLomwVHErVS4LfxFlPq0/FTAw==}
@@ -4895,6 +4895,10 @@ packages:
     resolution: {integrity: sha512-yau8yJdTt989Mm0Bd/236QnzEiPf2xLLTqUZRUJOo/3CB078LSwzei343DgtJVmfJKJE3TMINY1u42SQsP6mXw==}
     engines: {node: '>=14.0.0'}
 
+  tinyrainbow@3.2.0:
+    resolution: {integrity: sha512-LgO3D9yZJjApUiuUfl9iFAwrtaX4+lok3wJIqttGoKCHlWUqHqbQpnxCf82L8FjgKsh4iGo78hqJwgL8F6To2A==}
+    engines: {node: '>=14.0.0'}
+
   tldts-core@7.4.15:
     resolution: {integrity: sha512-ERuv0p98XgSzmlSLJr8vDNxX+uATGInlN97V3R+JpYWaSqn5IG3ewWgCwczk4bkOpgth/o8Nt5FOi4B4w0n/1A==}
 
@@ -5539,7 +5543,7 @@ snapshots:
       '@babel/parser': 7.29.9
       '@babel/types': 7.29.8
 
-  '@babel/traverse@7.29.0':
+  '@babel/traverse@7.29.0(supports-color@7.2.0)':
     dependencies:
       '@babel/code-frame': 7.29.7
       '@babel/generator': 7.29.8
@@ -6655,7 +6659,7 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
     optionalDependencies:
-      vitest: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
+      vitest: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.5)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
 
   '@testing-library/react@16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
@@ -7058,7 +7062,7 @@ snapshots:
       obug: 2.2.1
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
+      vitest: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.5)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
 
   '@vitest/istanbul-lib-coverage@1.0.1': {}
 
@@ -7075,27 +7079,27 @@ snapshots:
     optionalDependencies:
       vite: 8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0)
 
-  '@vitest/pretty-format@5.0.2':
+  '@vitest/pretty-format@5.0.5':
     dependencies:
-      tinyrainbow: 3.1.1
+      tinyrainbow: 3.2.0
 
   '@vitest/spy@5.0.2': {}
 
-  '@vitest/ui@5.0.2(vitest@5.0.2)':
+  '@vitest/ui@5.0.5(vitest@5.0.2)':
     dependencies:
-      '@vitest/utils': 5.0.2
+      '@vitest/utils': 5.0.5
       fflate: 0.8.3
       flatted: 3.4.4
       pathe: 2.0.3
       sirv: 3.0.2
-      tinyrainbow: 3.1.1
-      vitest: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
+      tinyrainbow: 3.2.0
+      vitest: 5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.5)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
 
-  '@vitest/utils@5.0.2':
+  '@vitest/utils@5.0.5':
     dependencies:
-      '@vitest/pretty-format': 5.0.2
+      '@vitest/pretty-format': 5.0.5
       convert-source-map: 2.0.0
-      tinyrainbow: 3.1.1
+      tinyrainbow: 3.2.0
 
   '@vue/compiler-core@3.5.43':
     dependencies:
@@ -7221,7 +7225,7 @@ snapshots:
   ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.1.8
+      fast-uri: 3.1.9
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
@@ -7707,7 +7711,7 @@ snapshots:
 
   engine.io-parser@5.2.3: {}
 
-  engine.io@6.6.11:
+  engine.io@6.6.11(supports-color@7.2.0):
     dependencies:
       '@types/cors': 2.8.19
       '@types/node': 26.6.2
@@ -8154,7 +8158,7 @@ snapshots:
 
   fast-safe-stringify@2.1.1: {}
 
-  fast-uri@3.1.8: {}
+  fast-uri@3.1.9: {}
 
   fastq@1.20.3:
     dependencies:
@@ -9161,7 +9165,7 @@ snapshots:
 
   postcss@8.5.28:
     dependencies:
-      nanoid: 3.3.19
+      nanoid: 3.3.20
       picocolors: 1.1.1
       source-map-js: 1.2.2
 
@@ -9270,10 +9274,10 @@ snapshots:
       react: 19.3.0
       scheduler: 0.28.0
 
-  react-email@6.11.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  react-email@6.11.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(supports-color@7.2.0):
     dependencies:
       '@babel/parser': 7.29.2
-      '@babel/traverse': 7.29.0
+      '@babel/traverse': 7.29.0(supports-color@7.2.0)
       '@react-email/render': 2.1.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       chokidar: 5.0.0
       commander: 13.1.0
@@ -9293,7 +9297,7 @@ snapshots:
       prompts: 2.4.2
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
-      socket.io: 4.8.3
+      socket.io: 4.8.3(supports-color@7.2.0)
       tailwindcss: 4.3.3
       tsconfig-paths: 4.2.0
     transitivePeerDependencies:
@@ -9596,7 +9600,7 @@ snapshots:
 
   sisteransi@1.0.5: {}
 
-  socket.io-adapter@2.5.8:
+  socket.io-adapter@2.5.8(supports-color@7.2.0):
     dependencies:
       debug: 4.4.3(supports-color@7.2.0)
       ws: 8.21.3
@@ -9605,22 +9609,22 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  socket.io-parser@4.2.7:
+  socket.io-parser@4.2.7(supports-color@7.2.0):
     dependencies:
       '@socket.io/component-emitter': 3.1.2
       debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
-  socket.io@4.8.3:
+  socket.io@4.8.3(supports-color@7.2.0):
     dependencies:
       accepts: 1.3.8
       base64id: 2.0.0
       cors: 2.8.6
       debug: 4.4.3(supports-color@7.2.0)
-      engine.io: 6.6.11
-      socket.io-adapter: 2.5.8
-      socket.io-parser: 4.2.7
+      engine.io: 6.6.11(supports-color@7.2.0)
+      socket.io-adapter: 2.5.8(supports-color@7.2.0)
+      socket.io-parser: 4.2.7(supports-color@7.2.0)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -9772,6 +9776,8 @@ snapshots:
       picomatch: 4.0.7
 
   tinyrainbow@3.1.1: {}
+
+  tinyrainbow@3.2.0: {}
 
   tldts-core@7.4.15: {}
 
@@ -10051,7 +10057,7 @@ snapshots:
       - universal-cookie
       - yaml
 
-  vitest@5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.2)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0)):
+  vitest@5.0.2(@types/node@24.19.0)(@vitest/coverage-v8@5.0.2)(@vitest/ui@5.0.5)(jsdom@30.1.1)(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0)):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/mocker': 5.0.2(vite@8.3.7(@types/node@24.19.0)(esbuild@0.28.2)(jiti@2.7.0))
@@ -10070,7 +10076,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.19.0
       '@vitest/coverage-v8': 5.0.2(vitest@5.0.2)
-      '@vitest/ui': 5.0.2(vitest@5.0.2)
+      '@vitest/ui': 5.0.5(vitest@5.0.2)
       jsdom: 30.1.1
     transitivePeerDependencies:
       - msw
